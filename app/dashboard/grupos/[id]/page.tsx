@@ -679,7 +679,7 @@ const currentUserScore =
                   Posiciones
                 </h2>
                 <p className="mt-1 text-xs text-zinc-500">
-                  Actualización cada 15s
+                  Actualización en tiempo real
                 </p>
               </div>
 

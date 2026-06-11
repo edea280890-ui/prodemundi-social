@@ -6,40 +6,52 @@ import { supabase } from "@/lib/supabase";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function LoginPage() {
+export default function ResetPasswordPage() {
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  async function handleLogin() {
+  async function handleReset(e: React.FormEvent) {
+    e.preventDefault();
     setMessage("");
 
-    if (!email || !password) {
+    if (!password || !confirmPassword) {
       setMessage("Completá todos los campos.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setMessage("Las contraseñas no coinciden.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setMessage("La contraseña debe tener al menos 6 caracteres.");
       return;
     }
 
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const { error } = await supabase.auth.updateUser({
+        password: password,
       });
 
       if (error) {
         setMessage(error.message);
-        setLoading(false);
-        return;
+      } else {
+        setMessage("Contraseña restablecida con éxito. Redirigiendo al login...");
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
       }
-
-      router.push("/dashboard");
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : String(err);
       setMessage("Error de conexión: " + errorMsg);
+    } finally {
       setLoading(false);
     }
   }
@@ -71,17 +83,16 @@ export default function LoginPage() {
 
             <div className="relative z-10 mt-8">
               <p className="mb-3 text-xs font-bold uppercase tracking-[0.30em] text-[#f6d365]">
-                Ingresá a tu torneo
+                Nueva clave
               </p>
 
               <h1 className="font-[family-name:var(--font-cinzel)] text-5xl font-black leading-none">
-                Volvé a jugar
-                <span className="block text-[#ffd978]">con tu grupo</span>
+                Restablecer
+                <span className="block text-[#ffd978]">contraseña</span>
               </h1>
 
               <p className="mt-5 max-w-md text-sm leading-7 text-zinc-100">
-                Entrá a tus grupos, cargá pronósticos y revisá cómo venís en la
-                tabla de posiciones.
+                Ingresá tu nueva contraseña de seguridad para actualizar tus datos de acceso a PRODEMUNDI.
               </p>
             </div>
 
@@ -107,39 +118,39 @@ export default function LoginPage() {
             </div>
 
             <p className="mb-2 text-xs font-bold uppercase tracking-[0.30em] text-[#f6d365]">
-              Iniciar sesión
+              Seguridad
             </p>
 
             <h2 className="font-[family-name:var(--font-cinzel)] text-4xl font-black leading-none">
-              Bienvenido
-              <span className="block text-[#ffd978]">de nuevo</span>
+              Actualizar
+              <span className="block text-[#ffd978]">contraseña</span>
             </h2>
 
-            <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="mt-8 space-y-5">
+            <form onSubmit={handleReset} className="mt-8 space-y-5">
               <div>
                 <label className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-[#f6d365]">
-                  Email
+                  Nueva contraseña
                 </label>
 
                 <input
-                  type="email"
-                  placeholder="tu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="password"
+                  placeholder="Mínimo 6 caracteres"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full rounded-2xl border border-[#d4af37]/18 bg-black/35 px-5 py-4 text-sm text-white outline-none backdrop-blur-md transition placeholder:text-zinc-500 focus:border-[#d4af37]/55"
                 />
               </div>
 
               <div>
                 <label className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-[#f6d365]">
-                  Contraseña
+                  Confirmar contraseña
                 </label>
 
                 <input
                   type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Repetí la contraseña"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   className="w-full rounded-2xl border border-[#d4af37]/18 bg-black/35 px-5 py-4 text-sm text-white outline-none backdrop-blur-md transition placeholder:text-zinc-500 focus:border-[#d4af37]/55"
                 />
               </div>
@@ -149,7 +160,7 @@ export default function LoginPage() {
                 disabled={loading}
                 className="w-full rounded-2xl border border-[#d4af37]/40 bg-black/40 px-6 py-4 text-xs font-black uppercase tracking-[0.18em] text-white backdrop-blur-md transition hover:-translate-y-0.5 hover:border-[#f6d365]/70 hover:text-[#f6d365] disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {loading ? "Ingresando..." : "Entrar"}
+                {loading ? "Actualizando..." : "Restablecer contraseña"}
               </button>
 
               {message && (
@@ -160,31 +171,11 @@ export default function LoginPage() {
             </form>
 
             <p className="mt-8 text-center text-sm text-zinc-100">
-              ¿No tenés cuenta?{" "}
               <Link
-                href="/register"
+                href="/login"
                 className="font-bold text-[#ffd978] transition hover:text-white"
               >
-                Crear cuenta
-              </Link>
-            </p>
-
-            <p className="mt-4 text-center text-sm text-zinc-100">
-              ¿Te olvidaste la contraseña?{" "}
-              <Link
-                href="/forgot-password"
-                className="font-bold text-[#ffd978] transition hover:text-white"
-              >
-                Recuperar clave
-              </Link>
-            </p>
-
-            <p className="mt-4 text-center">
-              <Link
-                href="/"
-                className="text-xs font-black uppercase tracking-[0.18em] text-zinc-300 transition hover:text-[#f6d365]"
-              >
-                Volver al inicio
+                Volver al inicio de sesión
               </Link>
             </p>
           </div>

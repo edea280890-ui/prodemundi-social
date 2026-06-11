@@ -33,30 +33,35 @@ export default function RegisterPage() {
 
     setLoading(true);
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          name,
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+          },
         },
-      },
-    });
+      });
 
-    if (error) {
       setLoading(false);
-      setMessage(error.message);
-      return;
-    }
 
-    if (!data.user) {
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+
+      if (!data.user) {
+        setMessage("No se pudo crear el usuario.");
+        return;
+      }
+
+      setMessage("Cuenta creada. Revisá tu email para confirmar el registro.");
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
       setLoading(false);
-      setMessage("No se pudo crear el usuario.");
-      return;
+      setMessage("Error de conexión: " + errorMsg);
     }
-
-    setLoading(false);
-    setMessage("Cuenta creada. Revisá tu email para confirmar el registro.");
   }
 
   return (
@@ -130,7 +135,7 @@ export default function RegisterPage() {
               <span className="block text-[#ffd978]">cuenta</span>
             </h2>
 
-            <form className="mt-8 space-y-5">
+            <form onSubmit={(e) => { e.preventDefault(); handleRegister(); }} className="mt-8 space-y-5">
               <div>
                 <label className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-[#f6d365]">
                   Nombre visible
@@ -188,8 +193,7 @@ export default function RegisterPage() {
               </div>
 
               <button
-                type="button"
-                onClick={handleRegister}
+                type="submit"
                 disabled={loading}
                 className="w-full rounded-2xl border border-[#d4af37]/40 bg-black/40 px-6 py-4 text-xs font-bold uppercase tracking-[0.18em] text-white backdrop-blur-md transition hover:-translate-y-0.5 hover:border-[#f6d365]/70 hover:text-[#f6d365] disabled:cursor-not-allowed disabled:opacity-50"
               >

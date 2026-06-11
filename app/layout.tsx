@@ -5,6 +5,7 @@ import {
   Rajdhani,
 } from "next/font/google";
 import "./globals.css";
+import PWARegister from "@/components/PWARegister";
 
 const exo2 = Exo_2({
   subsets: ["latin"],
@@ -27,6 +28,7 @@ const rajdhani = Rajdhani({
 export const metadata: Metadata = {
   title: "PRODEMUNDI Social",
   description: "Plataforma premium de pronósticos deportivos.",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -35,17 +37,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-  <html
-    lang="es"
-    className={`
-      ${exo2.variable}
-      ${montserrat.variable}
-      ${rajdhani.variable}
-    `}
-  >
-    <body className="bg-[#050505] text-white">
-      {children}
-    </body>
-  </html>
-);
+    <html
+      lang="es"
+      className={`
+        ${exo2.variable}
+        ${montserrat.variable}
+        ${rajdhani.variable}
+      `}
+    >
+      <body className="bg-[#050505] text-white">
+        <PWARegister />
+        {children}
+      </body>
+    </html>
+  );
 }
