@@ -86,7 +86,7 @@ export default function LoginPage() {
             </div>
 
             <Image
-              src="/jugador11.png"
+              src="/jugador7.png"
               alt="Jugador decorativo"
               width={300}
               height={300}

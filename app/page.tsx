@@ -46,11 +46,10 @@ function Navbar() {
   return (
     <header className="fixed left-0 top-0 z-50 w-full px-5 pt-4 sm:px-8 lg:px-10">
       <nav
-        className={`mx-auto flex max-w-7xl items-center justify-between rounded-2xl border px-4 py-3 transition-all duration-500 ${
-          scrolled
-            ? "border-[#d4af37]/25 bg-black/45 shadow-[0_18px_60px_rgba(0,0,0,0.42)] backdrop-blur-xl"
-            : "border-[#d4af37]/15 bg-black/25 shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-md"
-        }`}
+        className={`mx-auto flex max-w-7xl items-center justify-between rounded-2xl border px-4 py-3 transition-all duration-500 ${scrolled
+          ? "border-[#d4af37]/25 bg-black/45 shadow-[0_18px_60px_rgba(0,0,0,0.42)] backdrop-blur-xl"
+          : "border-[#d4af37]/15 bg-black/25 shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-md"
+          }`}
       >
         <div className="flex items-center gap-3">
           <Image
@@ -101,9 +100,8 @@ function CardImage({ src, alt }: { src: string; alt: string }) {
         alt={alt}
         width={420}
         height={420}
-        className={`h-[160px] w-[160px] object-contain ${
-          imageAdjustments[src] ?? ""
-        } drop-shadow-[0_0_34px_rgba(0,0,0,0.35)] transition duration-300 group-hover:scale-110`}
+        className={`h-[160px] w-[160px] object-contain ${imageAdjustments[src] ?? ""
+          } drop-shadow-[0_0_34px_rgba(0,0,0,0.35)] transition duration-300 group-hover:scale-110`}
       />
     </div>
   );
